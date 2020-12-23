@@ -1,9 +1,9 @@
 # New York State COVID-19 Analytics
 ### Regional Risk Mapping
 
-The below figures aim to provide an insight into each county's condition in New York as it pertains to the severity of the COVID-19 pandemic. The statistics are divided by [Regional Councils](https://regionalcouncils.ny.gov/). Planners use these figures to quickly visualize the regions that are likely most at risk of local medical infrastructure becoming overwhelmed. This information is then used to make operational decisions.
+This script aims to aid in providing an insight into each county's condition in New York as it pertains to the severity of the COVID-19 pandemic. Data analysis is divided by [Regional Councils](https://regionalcouncils.ny.gov/). Planners use these figures to quickly visualize the regions that are likely most at risk of local medical infrastructure becoming overwhelmed. This information is then used to make operational decisions.
 
-Using publicly available information and insights gained from the New York State Department of Health, the figures below reveal the current 14-day trend in COVID-19 cases (based on a seven-day rolling average) and provides insight into the potential for local medical infrastructure to be overwhelmed based on assessed ICU bed usage.
+Using publicly available information and insights gained from the New York State Department of Health, the generated figures reveal the current 14-day trend in COVID-19 cases (based on a seven-day rolling average) and provides insight into the potential for local medical infrastructure to be overwhelmed based on assessed ICU bed usage.
 
 <br>
 
@@ -33,7 +33,7 @@ This project is based on data sourced from [COVID Act Now](https://www.covidactn
 We are utilizing data provided by the [COVID Act Now API](https://apidocs.covidactnow.org/).
 
 ---
-This notebook is developed and maintained by [The Center for Cyber Intelligence](https://https://centerforcyberintelligence.org/)
+This project is developed and maintained by [The Center for Cyber Intelligence](https://https://centerforcyberintelligence.org/)
 
 **A very special thanks to Philippe Langlois for his exceptional contributions and assistance on this project. This project would not have been possible without his help.**
 
