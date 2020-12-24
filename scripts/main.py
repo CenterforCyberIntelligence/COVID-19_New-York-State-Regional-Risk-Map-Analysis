@@ -29,12 +29,14 @@ import os
 import pandas as pd
 from os import system, name
 from modules import helper_functions
+from modules import pptxGenerator
 from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.ticker import PercentFormatter
 
 # TODO: Update all figures to include current total ICU availability. At this time, only the Capital Region has this completed.
 # TODO: Create a single function for saving images.
+# TODO: Develop a simple method to archive data that is utilized to generate the figures. Some of the data utilized can only be obtained via daily summaries from COVID Act Now.
 
 
 def create_StateOverview(cwd, historicData, todayDate):
@@ -1432,6 +1434,17 @@ def main():
     print("---> NYS Regional COVID-19 ICU Risk Assessment Tool <---")
     print("*" * 56)
     print("")
+    print("Developed and maintained by: Chris Cooley")
+    print("www.centerforcyberintelligence.org")
+    print("-"*41)
+    print("Support for this project provided by:")
+    print("- Phil Langlois")
+    print("=" * 41)
+    print("Data provided by: COVID Act Now")
+    print("www.covidactnow.org")
+    print("")
+    print("+" * 56)
+    print("")
 
     # Get current working directory
     print("[*] Setting up the working directory...")
@@ -1459,26 +1472,31 @@ def main():
 
     print("*** Creating Analytical Figures ***\n")
 
-    print("[1 of 10] Creating the State Overview figure...")
+    print("[1 of 11] Creating the State Overview figure...")
     create_StateOverview(cwd, historicData, todayDate)
-    print("[2 of 10] Creating the Capital Region figure...")
+    print("[2 of 11] Creating the Capital Region figure...")
     create_regional_CapitalRegion(cwd, historicData, currentSummary, todayDate)
-    print("[3 of 10] Creating the Western New York figure...")
+    print("[3 of 11] Creating the Western New York figure...")
     create_regional_WesternNewYork(cwd, historicData, todayDate)
-    print("[4 of 10] Creating the Finger Lakes figure...")
+    print("[4 of 11] Creating the Finger Lakes figure...")
     create_regional_FingerLakes(cwd, historicData, todayDate)
-    print("[5 of 10] Creating the Southern Tier figure...")
+    print("[5 of 11] Creating the Southern Tier figure...")
     create_regional_SouthernTier(cwd, historicData, todayDate)
-    print("[6 of 10] Creating the Central New York figure...")
+    print("[6 of 11] Creating the Central New York figure...")
     create_regional_CentralNewYork(cwd, historicData, todayDate)
-    print("[7 of 10] Creating the Mohawk Valley figure...")
+    print("[7 of 11] Creating the Mohawk Valley figure...")
     create_regional_MohawkValley(cwd, historicData, todayDate)
-    print("[8 of 10] Creating the North Country figure...")
+    print("[8 of 11] Creating the North Country figure...")
     create_regional_NorthCountry(cwd, historicData, todayDate)
-    print("[9 of 10] Creating the New York City figure...")
+    print("[9 of 11] Creating the New York City figure...")
     create_regional_NewYorkCity(cwd, historicData, todayDate)
-    print("[10 of 10] Creating the Long Island figure...")
+    print("[10 of 11] Creating the Long Island figure...")
     create_regional_LongIsland(cwd, historicData, todayDate)
+    print("[11 of 11] Creating the Mid-Hudson figure...")
+    create_regional_MidHudson(cwd, historicData, todayDate)
+
+    print("\n** Creating PowerPoint Presentation **\n")
+    pptxGenerator.makePresentation()
 
     print("\n**************************")
     print("---> PROCESS COMPLETE <---")
