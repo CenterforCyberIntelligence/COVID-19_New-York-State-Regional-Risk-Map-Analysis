@@ -100,7 +100,7 @@ def savePresentation(slides):
     prs.save(pptxFilePath)
 
     # Open PowerPoint when finished
-    os.startfile(pptxFilePath)
+    # os.startfile(pptxFilePath)
 
 
 def makePresentation():
