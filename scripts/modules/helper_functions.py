@@ -1,8 +1,12 @@
 import os
 import pytz
+import pickle
+import csv
 import pandas as pd
 from datetime import datetime
-
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
 # API Key required by COVID Act Now
 apiKey = "4d04a4db2e1945659ec528545143acd1"
@@ -77,3 +81,111 @@ def get_currentSummary():
     except Exception as e:
         print("\nThe script encountered an unhandled exception while attempting to retrieve today's summary data. See the get_currentSummary() function.")
         print(f"Exception: {e}")
+
+
+def driveService():
+    SCOPES = ['https://www.googleapis.com/auth/drive']
+    creds = None
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('../helper_files/token.pickle'):
+        with open('../helper_files/token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                '../helper_files/credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('../helper_files/token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+    service = build('drive', 'v3', credentials=creds)
+    return service
+
+
+def drive_createTodayFolder():
+    today = get_Date()
+    service = driveService()
+    print("[*] Creating a folder to save today's images in...")
+    # Find the ICU Images Folder ID (saved during the initial creation of the folder in file_ids.csv under helper_files
+
+    print("[**] Looking up the Analysis Images folder ID...")
+    file_ids = csv.reader(open('../helper_files/file_ids.csv', 'r'))
+    for row in file_ids:
+        if row[0] == '2':
+            folderData = row
+            imagesFolderID = folderData[2]
+            print(f"--> Found ID: {imagesFolderID}")
+
+            # Check to see if there is a in Google Drive for today
+            print("[**] Checking to see if a folder for today already exists...")
+            page_token = None
+            response = service.files().list(
+                q="mimeType='application/vnd.google-apps.folder' and parents in '{}'".format(imagesFolderID),
+                spaces='drive',
+                fields='nextPageToken, files(name)',
+                pageToken=page_token).execute()
+
+            if not response['files']:
+                print("[!] No folders found...")
+                print("[*] Creating an Images Folder for today...")
+                gdrive_todayImagesFolder_metadata = {
+                    'name': today,
+                    'mimeType': 'application/vnd.google-apps.folder',
+                    'parents': [imagesFolderID]
+                }
+                gdrive_todayImagesFolder = service.files().create(body=gdrive_todayImagesFolder_metadata,
+                                                                  fields='id').execute()
+                gdrive_TodayImagesFolderID = gdrive_todayImagesFolder.get('id')
+
+                # Get "File ID Index" of last row in file_ids csv file
+                indexedCSVFile = pd.read_csv("../helper_files/file_ids.csv")
+                csvRecord_todayFolderIndexValue = indexedCSVFile['File ID Index'].iloc[-1] + 1
+
+                csvRecord_todayFolderName = "ICU_Analysis_Images_" + today
+                csv_data = [csvRecord_todayFolderIndexValue, csvRecord_todayFolderName, gdrive_TodayImagesFolderID]
+
+                filename = '../helper_files/file_ids.csv'
+
+                with open(filename, 'a', newline='') as csv_file:
+                    csv_writer = csv.writer(csv_file)
+                    csv_writer.writerow(csv_data)
+                    csv_file.close()
+
+                print(f"[*] SUCCESS | Google Drive Folder ID for {today}: %s" % gdrive_TodayImagesFolderID)
+            else:
+                for folderName in response['files']:
+                    if folderName['name'] == today:
+                        print("[**] Found an images folder for today! Skipping the rest of this function...\n")
+                        pass
+                    else:
+                        # If no folder for today exists, create an images folder for today
+                        print("[*] Creating an Images Folder for today...")
+                        gdrive_todayImagesFolder_metadata = {
+                            'name': today,
+                            'mimeType': 'application/vnd.google-apps.folder',
+                            'parents': [imagesFolderID]
+                        }
+                        gdrive_todayImagesFolder = service.files().create(body=gdrive_todayImagesFolder_metadata, fields='id').execute()
+                        gdrive_TodayImagesFolderID = gdrive_todayImagesFolder.get('id')
+
+                        # Get "File ID Index" of last row in file_ids csv file
+                        indexedCSVFile = pd.read_csv("../helper_files/file_ids.csv")
+                        csvRecord_todayFolderIndexValue = indexedCSVFile['File ID Index'].iloc[-1] + 1
+
+                        csvRecord_todayFolderName = "ICU_Analysis_Images_" + today
+                        csv_data = [csvRecord_todayFolderIndexValue, csvRecord_todayFolderName, gdrive_TodayImagesFolderID]
+
+                        filename = '../helper_files/file_ids.csv'
+
+                        with open(filename, 'a+', newline='') as csv_file:
+                            csv_writer = csv.writer(csv_file)
+                            csv_writer.writerow(csv_data)
+                            csv_file.close()
+
+                        print(f"[*] SUCCESS | Google Drive Folder ID for {today}: %s" % gdrive_TodayImagesFolderID)
+
