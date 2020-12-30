@@ -26,13 +26,16 @@ The Center for Cyber Intelligence.
 """
 
 import os
-import pandas as pd
 from os import system, name
-from modules import helper_functions
-from modules import pptxGenerator
+
+import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.ticker import PercentFormatter
+
+from modules import helper_functions
+from modules import pptxGenerator
+
 
 # TODO: Update all figures to include current total ICU availability. At this time, only the Capital Region has this completed.
 # TODO: Create a single function for saving images.
@@ -1500,6 +1503,7 @@ def main():
 
     print("\n** Creating PowerPoint Presentation **\n")
     pptxGenerator.makePresentation()
+    helper_functions.drive_writeImagesToFolder()
 
     print("\n**************************")
     print("---> PROCESS COMPLETE <---")

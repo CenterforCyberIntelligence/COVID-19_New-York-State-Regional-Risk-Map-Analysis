@@ -1,6 +1,36 @@
-import helper_functions
 import csv
 import os
+import pickle
+
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+
+
+# TODO: Combine the driveSetup.py and driveQuickstart.py files
+
+def driveService():
+    SCOPES = ['https://www.googleapis.com/auth/drive']
+    creds = None
+    cwd = os.getcwd()
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists(os.path.join('../helper_files/credentials.json')):
+        with open(os.path.join('../helper_files/token.pickle'), 'rb') as token:
+            creds = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(os.path.join('../helper_files/credentials.json'), SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open(os.path.join('../helper_files/token.pickle'), 'wb') as token:
+            pickle.dump(creds, token)
+    service = build('drive', 'v3', credentials=creds)
+    return service
 
 
 def drive_executeInitialFolderSetup():
@@ -9,13 +39,14 @@ def drive_executeInitialFolderSetup():
     print("+" * 35)
     print("Initial Google Drive Setup Starting")
     print("+" * 35)
-    service = helper_functions.driveService()
+    service = driveService()
     csv_data = []
 
     # Create a parent folder for all New York COVID-19 Analysis Projects
     parentFolder_metadata = {
         'name': 'New York COVID-19 Analysis Projects',
-        'mimeType': 'application/vnd.google-apps.folder'
+        'mimeType': 'application/vnd.google-apps.folder',
+        'folderColorRgb': "#ff7537"
     }
     parentFolder = service.files().create(body=parentFolder_metadata, fields='id').execute()
     parentFolderID = parentFolder.get('id')
@@ -26,7 +57,8 @@ def drive_executeInitialFolderSetup():
     icuRiskAnalysisFolder_metadata = {
         'name': 'Regional ICU Risk Analysis',
         'mimeType': 'application/vnd.google-apps.folder',
-        'parents': [parentFolderID]
+        'parents': [parentFolderID],
+        'folderColorRgb': "ffad46"
     }
     icuRiskAnalysisFolder = service.files().create(body=icuRiskAnalysisFolder_metadata, fields='id').execute()
     icuRiskAnalysisFolderID = icuRiskAnalysisFolder.get('id')
@@ -57,3 +89,6 @@ def drive_executeInitialFolderSetup():
         # Close the file
         csv_file.close()
         print('---> Google Drive Initial Folder Setup Complete <---\n')
+
+
+drive_executeInitialFolderSetup()
