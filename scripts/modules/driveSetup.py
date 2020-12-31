@@ -12,7 +12,6 @@ from googleapiclient.discovery import build
 def driveService():
     SCOPES = ['https://www.googleapis.com/auth/drive']
     creds = None
-    cwd = os.getcwd()
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
