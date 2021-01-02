@@ -44,26 +44,27 @@ This project is developed and maintained by [The Center for Cyber Intelligence](
 <hr>
 
 ### Script Requirements
-This script was developed using Python 3.9.1 - No testing has been conducted with prior or alternate versions of Python.
+This script was developed for Python 3.9.1 - Testing has been done with versions down to Python 3.8.5
 
-The following Python libraries are required for this script to run. 
+I use pip to manage my python installations. To install pip for Python 3.x --> ```sudo apt install python3-pip```
+
+The following Python libraries are required for this script to run.
 * [pandas](https://pandas.pydata.org/)
   ```pip install pandas```
 * [matplotlib](https://matplotlib.org/)
   ```pip install matplotlib```
 * [python-pptx](https://python-pptx.readthedocs.io/en/latest/)
   ```pip install python-pptx```
-  
+
 To use Google Drive integration, you will need to follow the instructions below to enable the Google Drive API for your Google Account.
 
 * Visit the [Google Drive Python Quickstart](https://developers.google.com/drive/api/v3/quickstart/python) guide and enable the Google Drive API for your Google account.
   * When enabling the Drive API:
     * Give your "project" a name (such as New York ICU Risk Analysis)
-    * When prompted, configure your OAuth client as ```Desktop app``` 
-* Save your ```credentials.json``` file to the ```../scripts/helper_files``` folder in your directory.
-* Run -> ```pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib```
-* Run ```quickstart.py``` found in the ```../scripts/helper_files``` folder.
-* Run -> ```py driveQuickstart.py```
+    * When prompted, configure your OAuth client as `Desktop app`
+* Save your `credentials.json` file to the `../scripts/helper_files` folder.
+* Run -> `pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib`
+* Run -> `../scripts/helper_files/driveQuickstart.py`
     * This file has been modified to enable full, permissive scope to access all of a user's files, excluding the Application Data Folder
       * Using the ```quickstart.py``` file from the Google API Reference page will only allow you to "read" metadata of the user's drive files - i.e. it won't work for the purposes of this script.
     * You can find more information regarding drive Scope access [here](https://developers.google.com/drive/api/v3/about-auth).
@@ -73,3 +74,18 @@ To use Google Drive integration, you will need to follow the instructions below 
 * The sample will proceed automatically, and you may close the window/tab.
 
 You can always manage your Google API credentials and usage later in the [Google API Console](https://console.developers.google.com/apis/dashboard).
+
+<hr>
+
+### Script Setup
+This script has been tested on Windows 10 Pro using Python 3.9.1 and Ubuntu 20.04 (LTS) using 1GB RAM and 25GB Disk Space
+
+To set up this script for it's first run, follow the instructions below:
+
+1. Verify you are running a compatible version of Python and you have `pip` installed.
+2. Clone this GitHub repo to a working directory of your choice.
+    * `git clone https://github.com/CenterforCyberIntelligence/COVID-19_New-York-State-Regional-Risk-Map-Analysis.git`
+3. Run `pip install -r requirements.txt` - This will install all necessary Python libraries for this script to run.
+4. Within the newly cloned Git repo, navigate to the `../modules` directory.
+5. Run `python3 driveSetup.py`
+    * Before running this script, ensure you have met all requirements needed to run Google Drive integration via the Drive API using the instructions above.
