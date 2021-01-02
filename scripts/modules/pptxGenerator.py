@@ -1,6 +1,9 @@
 import os
-from . import helper_functions
+
 from pptx import Presentation
+
+from . import helper_functions
+
 # python-pptx documentation: https://python-pptx.readthedocs.io/en/latest/index.html
 
 # TODO: Clean up this script a bit - There are probably some better ways to handle directory navigation and file saving. For now it works, but it could definitely be better.
@@ -101,7 +104,7 @@ def savePresentation(slides):
     cwd = os.getcwd()
     pptxFilePath = os.path.join(cwd, "Daily Slides", pptxFileName)
     prs.save(pptxFilePath)
-    print(f"[*] Powerpoint file saved to --> {pptxFilePath}")
+    print(f"[*] Powerpoint file saved to --> {pptxFilePath}\n")
 
     # Open PowerPoint when finished
     # os.startfile(pptxFilePath)

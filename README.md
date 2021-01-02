@@ -53,3 +53,23 @@ The following Python libraries are required for this script to run.
   ```pip install matplotlib```
 * [python-pptx](https://python-pptx.readthedocs.io/en/latest/)
   ```pip install python-pptx```
+  
+To use Google Drive integration, you will need to follow the instructions below to enable the Google Drive API for your Google Account.
+
+* Visit the [Google Drive Python Quickstart](https://developers.google.com/drive/api/v3/quickstart/python) guide and enable the Google Drive API for your Google account.
+  * When enabling the Drive API:
+    * Give your "project" a name (such as New York ICU Risk Analysis)
+    * When prompted, configure your OAuth client as ```Desktop app``` 
+* Save your ```credentials.json``` file to the ```../scripts/helper_files``` folder in your directory.
+* Run -> ```pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib```
+* Run ```quickstart.py``` found in the ```../scripts/helper_files``` folder.
+* Run -> ```py driveQuickstart.py```
+    * This file has been modified to enable full, permissive scope to access all of a user's files, excluding the Application Data Folder
+      * Using the ```quickstart.py``` file from the Google API Reference page will only allow you to "read" metadata of the user's drive files - i.e. it won't work for the purposes of this script.
+    * You can find more information regarding drive Scope access [here](https://developers.google.com/drive/api/v3/about-auth).
+* The sample will attempt to open a new window or tab in your default browser. If this fails, copy the URL from the console and manually open it in your browser.
+* If you are not already logged into your Google account, you will be prompted to log in. If you are logged into multiple Google accounts, you will be asked to select one account to use for the authorization.
+* Click the Accept button.
+* The sample will proceed automatically, and you may close the window/tab.
+
+You can always manage your Google API credentials and usage later in the [Google API Console](https://console.developers.google.com/apis/dashboard).

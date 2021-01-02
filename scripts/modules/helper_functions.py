@@ -1,8 +1,14 @@
+import csv
 import os
-import pytz
-import pandas as pd
+import pickle
 from datetime import datetime
 
+import pandas as pd
+import pytz
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 
 # API Key required by COVID Act Now
 apiKey = "4d04a4db2e1945659ec528545143acd1"
@@ -25,8 +31,7 @@ def convert_Time_NYTimeZone():
 
 def set_ImageSavePath(cwd):
     try:
-        timeNow = convert_Time_NYTimeZone()
-        todayDate = timeNow.strftime("%m-%d-%Y")
+        todayDate = get_Date()
         folderPath = os.path.join(cwd, 'Risk_Map_Images', todayDate)
         if not os.path.exists(folderPath):
             os.makedirs(folderPath)
@@ -77,3 +82,152 @@ def get_currentSummary():
     except Exception as e:
         print("\nThe script encountered an unhandled exception while attempting to retrieve today's summary data. See the get_currentSummary() function.")
         print(f"Exception: {e}")
+
+
+def driveService():
+    SCOPES = ['https://www.googleapis.com/auth/drive']
+    creds = None
+    cwd = os.getcwd()
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists(os.path.join(cwd, 'scripts', 'helper_files', 'credentials.json')):
+        with open(os.path.join(cwd, 'scripts', 'helper_files', 'token.pickle'), 'rb') as token:
+            creds = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(os.path.join(cwd, 'scripts', 'helper_files', 'credentials.json'), SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open(os.path.join(cwd, 'scripts', 'helper_files', 'token.pickle'), 'wb') as token:
+            pickle.dump(creds, token)
+    service = build('drive', 'v3', credentials=creds)
+    return service
+
+
+def drive_getImageFolderID():
+    print("*** Verifying ICU Analysis Images Folder Setup ***\n")
+    print("[**] Looking up the Analysis Images folder ID...")
+    cwd = os.getcwd()
+    filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
+    file_ids = csv.reader(open(filename, 'r'))
+    for row in file_ids:
+        if row[0] == '2':
+            folderData = row
+            imagesFolderID = folderData[2]
+            print(f"    --> Found ID: {imagesFolderID}\n")
+            return imagesFolderID
+        else:
+            pass
+
+
+def drive_createTodayFolder():
+    cwd = os.getcwd()
+    filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
+    today = get_Date()
+    service = driveService()
+    print("-"*66)
+    print("*** Starting Google Drive Functions ***\n")
+
+    # Find the ICU Images Folder ID (saved during the initial creation of the folder in file_ids.csv under helper_files
+    imagesFolderID = drive_getImageFolderID()
+
+    # Check to see if there is a in Google Drive for today
+    print("[**] Checking to see if a folder for today already exists...\n")
+    page_token = None
+    response = service.files().list(
+        q="mimeType='application/vnd.google-apps.folder' and parents in '{}'".format(imagesFolderID),
+        spaces='drive',
+        fields='nextPageToken, files(name)',
+        pageToken=page_token).execute()
+
+    if not response['files']:
+        # It appears the Google Drive API (V3) retains the relationship between a parent file and a child file even when
+        # a file is moved to the Drive Trash. In a scenario where "today's" folder is deleted, you must also delete it
+        # from the Google Drive Trash to recreate today's folder.
+        print("[!] There are no folders here... I can fix that!")
+        print("[+] Creating an Images Folder for today...")
+        gdrive_todayImagesFolder_metadata = {
+            'name': today,
+            'mimeType': 'application/vnd.google-apps.folder',
+            'parents': [imagesFolderID]
+        }
+        gdrive_todayImagesFolder = service.files().create(body=gdrive_todayImagesFolder_metadata,
+                                                          fields='id').execute()
+        gdrive_TodayImagesFolderID = gdrive_todayImagesFolder.get('id')
+
+        # Get "File ID Index" of last row in file_ids csv file
+        indexedCSVFile = pd.read_csv(filename)
+        csvRecord_todayFolderIndexValue = indexedCSVFile['File ID Index'].iloc[-1] + 1
+
+        csvRecord_todayFolderName = "ICU_Analysis_Images_" + today
+        csv_data = [csvRecord_todayFolderIndexValue, csvRecord_todayFolderName, gdrive_TodayImagesFolderID]
+
+        with open(filename, 'a', newline='') as csv_file:
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerow(csv_data)
+            csv_file.close()
+
+        print(f"[++] SUCCESS | Google Drive Folder ID for {today}: %s\n" % gdrive_TodayImagesFolderID)
+        return gdrive_TodayImagesFolderID
+    else:
+        for folderName in response['files']:
+            if folderName['name'] == today:
+                print("[**] Found an images folder for today...\n")
+                pass
+            else:
+                # If no folder for today exists, create an images folder for today
+                print("[*] No folder for today found...\n")
+                print("[+] Creating an Images Folder for today...")
+                gdrive_todayImagesFolder_metadata = {
+                    'name': today,
+                    'mimeType': 'application/vnd.google-apps.folder',
+                    'parents': [imagesFolderID]
+                }
+                gdrive_todayImagesFolder = service.files().create(body=gdrive_todayImagesFolder_metadata, fields='id').execute()
+                gdrive_TodayImagesFolderID = gdrive_todayImagesFolder.get('id')
+
+                # Get "File ID Index" of last row in file_ids csv file
+                indexedCSVFile = pd.read_csv(filename)
+                csvRecord_todayFolderIndexValue = indexedCSVFile['File ID Index'].iloc[-1] + 1
+
+                csvRecord_todayFolderName = "ICU_Analysis_Images_" + today
+                csv_data = [csvRecord_todayFolderIndexValue, csvRecord_todayFolderName, gdrive_TodayImagesFolderID]
+
+                with open(filename, 'a+', newline='') as csv_file:
+                    csv_writer = csv.writer(csv_file)
+                    csv_writer.writerow(csv_data)
+                    csv_file.close()
+
+                print(f"[++] SUCCESS | Google Drive Folder ID for {today}: %s\n" % gdrive_TodayImagesFolderID)
+                return gdrive_TodayImagesFolderID
+
+
+def drive_writeImagesToFolder():
+    # TODO: Check to see if files for today already exist in folder
+
+    drive_imagesFolderID = drive_createTodayFolder()
+    if drive_imagesFolderID is None:
+        print("[!] Image Folder Generation Failed...")
+        print("[**] Either the images folder for today is in the Google Drive Trash, or it already exists and no action is needed.\n")
+        pass
+    else:
+        print(f"Today's Image Folder ID: {drive_imagesFolderID}")
+        service = driveService()
+        cwd = os.getcwd()
+        todayDate = get_Date()
+        folderPath = os.path.join(cwd, 'Risk_Map_Images', todayDate)
+
+        for filename in os.listdir(folderPath):
+            filePath = os.path.join(folderPath, filename)
+            image_metaData = {'name': filename, 'parents': [drive_imagesFolderID]}
+            media = MediaFileUpload(filePath, mimetype='image/png')
+            file = service.files().create(body=image_metaData,
+                                          media_body=media,
+                                          fields='id').execute()
+            print(f"--> Image File Uploaded to GDrive | FileName: {filename} | GDrive File ID: {file.get('id')}")
+        print("\n--> All Images Uploaded to Google Drive <--\n")
+

@@ -26,17 +26,21 @@ The Center for Cyber Intelligence.
 """
 
 import os
-import pandas as pd
 from os import system, name
-from modules import helper_functions
-from modules import pptxGenerator
+
+import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.ticker import PercentFormatter
 
+from modules import helper_functions
+from modules import pptxGenerator
+
+
 # TODO: Update all figures to include current total ICU availability. At this time, only the Capital Region has this completed.
 # TODO: Create a single function for saving images.
 # TODO: Develop a simple method to archive data that is utilized to generate the figures. Some of the data utilized can only be obtained via daily summaries from COVID Act Now.
+# TODO: Probably could go through and work on exception handling. Low priority though...
 
 
 def create_StateOverview(cwd, historicData, todayDate):
@@ -1436,14 +1440,16 @@ def main():
     print("")
     print("Developed and maintained by: Chris Cooley")
     print("www.centerforcyberintelligence.org")
-    print("-"*41)
+    print("-"*70)
     print("Support for this project provided by:")
     print("- Phil Langlois")
-    print("=" * 41)
+    print("- Aaron Cooley")
+    print(">>> Support this project on Patreon @ www.patreon.com/chriscooley <<<")
+    print("=" * 70)
     print("Data provided by: COVID Act Now")
     print("www.covidactnow.org")
     print("")
-    print("+" * 56)
+    print("+" * 70)
     print("")
 
     # Get current working directory
@@ -1497,6 +1503,7 @@ def main():
 
     print("\n** Creating PowerPoint Presentation **\n")
     pptxGenerator.makePresentation()
+    helper_functions.drive_writeImagesToFolder()
 
     print("\n**************************")
     print("---> PROCESS COMPLETE <---")
