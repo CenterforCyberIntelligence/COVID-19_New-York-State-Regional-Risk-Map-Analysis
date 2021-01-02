@@ -64,11 +64,13 @@ To use Google Drive integration, you will need to follow the instructions below 
     * When prompted, configure your OAuth client as `Desktop app`
 * Save your `credentials.json` file to the `../scripts/helper_files` folder.
 * Run -> `pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib`
+  * This step is not necessary if you have run `pip install -r requirements.txt` per the instructions in "Script Setup"
 * Run -> `../scripts/helper_files/driveQuickstart.py`
     * This file has been modified to enable full, permissive scope to access all of a user's files, excluding the Application Data Folder
       * Using the ```quickstart.py``` file from the Google API Reference page will only allow you to "read" metadata of the user's drive files - i.e. it won't work for the purposes of this script.
     * You can find more information regarding drive Scope access [here](https://developers.google.com/drive/api/v3/about-auth).
 * The sample will attempt to open a new window or tab in your default browser. If this fails, copy the URL from the console and manually open it in your browser.
+  * Note if you are running this setup on a linux machine, you will need to go through this setup process first using a system that allows you to use a Web Browser and then manually move the generated `token.pickle` file to `../scripts/helper_files/` on your remote system.
 * If you are not already logged into your Google account, you will be prompted to log in. If you are logged into multiple Google accounts, you will be asked to select one account to use for the authorization.
 * Click the Accept button.
 * The sample will proceed automatically, and you may close the window/tab.
@@ -78,7 +80,7 @@ You can always manage your Google API credentials and usage later in the [Google
 <hr>
 
 ### Script Setup
-This script has been tested on Windows 10 Pro using Python 3.9.1 and Ubuntu 20.04 (LTS) using 1GB RAM and 25GB Disk Space
+This script has been tested on Windows 10 Pro using Python 3.9.1 and Ubuntu 20.04 (LTS) using 2GB RAM and 60GB Disk Space
 
 To set up this script for it's first run, follow the instructions below:
 
@@ -89,3 +91,28 @@ To set up this script for it's first run, follow the instructions below:
 4. Within the newly cloned Git repo, navigate to the `../modules` directory.
 5. Run `python3 driveSetup.py`
     * Before running this script, ensure you have met all requirements needed to run Google Drive integration via the Drive API using the instructions above.
+6. **KNOWN ISSUE**: For now you will need to create a folder for the PowerPoint function. I should have this fixed in a coming minor version update.
+    * Create a folder called `Daily Slides` under the parent `COVID-19_New-York-State-Regional-Risk-Map-Analysis` directory
+7. You should be good to go now! --> Run `../scripts/main.py`
+
+<hr>
+
+#### CRON Job Setup
+For this project, I personally am running the script on a Ubuntu 20.04 (LTS) Digital Ocean Droplet.
+To set up this script to run daily, feel free to set up a CRON Job using the following guide.
+
+First, you will need to set up a simple `bash` file to execute `main.py`
+1. In your `/home` directory, set up a bash file called `analysis.sh`:
+```
+#! /usr/bin/bash
+
+cd /home/Data_Analytics_Projects/COVID-19_New-York-State-Regional-Risk-Map-Analysis/scripts
+python3 main.py
+
+```
+2. Run `chmod +x /home/analysis.sh` to enable the file to run as an executable.
+3. Run `crontab -e`
+4. At the end of the file, add the following line: `0 7 * * * * $(which bash) /home/analysis.sh >> /var/log/cron.log 2>&1`
+    * This line will tell the system to run the `analysis.sh` file every day at 7am using bash and log all output to a log file called `cron.log` under the standard system logs directory.
+    * **Important:** The CRON job will run based on the current system time. You should ensure your system time zone is set up to reflect your current time zone before designating a time to run your CRON job. Most system defaults are UTC.
+    * A helpful resource to ensure your CRON job time syntax is correct can be found [here](https://crontab.guru/#0_7_*_*_*).
