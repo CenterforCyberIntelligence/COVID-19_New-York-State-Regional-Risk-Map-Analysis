@@ -97,6 +97,17 @@ def drive_executeInitialFolderSetup():
     csv_data.append(['4', 'Historic Data Management', dataManagementFolderID])
     print("[*] SUCCESS | Folder for Historic Data Created --> Folder ID: %s" % dataManagementFolderID)
 
+    # Create parent folder for Testing and Case Analysis
+    dailyTestingandDailyCaseAnalysisParent_metadata = {
+        'name': 'Daily Testing and COVID Case Analysis',
+        'mimeType': 'application/vnd.google-apps.folder',
+        'parents': [parentFolderID]
+    }
+    dailyTestingandDailyCaseAnalysisParent = service.files().create(body=dailyTestingandDailyCaseAnalysisParent_metadata, fields='id').execute()
+    dailyTestingandDailyCaseAnalysisFolderID = dailyTestingandDailyCaseAnalysisParent.get('id')
+    csv_data.append(['5', 'Historic Data Management', dailyTestingandDailyCaseAnalysisFolderID])
+    print("[*] SUCCESS | Folder for Historic Data Created --> Folder ID: %s" % dailyTestingandDailyCaseAnalysisFolderID)
+
     # Write File IDs to a CSV File so we can use them later
     header = ['File ID Index', 'File Name', 'File ID']
     filename = os.path.join('../helper_files', 'file_ids.csv')
