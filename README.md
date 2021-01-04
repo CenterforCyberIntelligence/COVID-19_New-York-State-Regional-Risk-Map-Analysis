@@ -75,16 +75,7 @@ To use Google Drive integration, you will need to follow the instructions below 
 * Save your `credentials.json` file to the `../scripts/helper_files` folder. Do not move this file.
 * Run -> `pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib`
   * *Note: This step is not necessary if you have run `pip install -r requirements.txt` per the instructions in "Script Setup"*
-* Run -> `../scripts/helper_files/driveQuickstart.py`
-    * This file has been modified to enable full, permissive scope to access all of a user's files, excluding the Application Data Folder
-      * Using the ```quickstart.py``` file from the Google API Reference page will only allow you to "read" metadata of the user's drive files - i.e. it won't work for the purposes of this script.
-    * *You can find more information regarding drive Scope access [here](https://developers.google.com/drive/api/v3/about-auth).*
-* The sample will attempt to open a new window or tab in your default browser. If this fails, copy the URL from the console and manually open it in your browser.
-  * *Note: If you are running this setup on a linux machine, you will need to go through this setup process first using a system that allows you to use a Web Browser and then manually move the generated `token.pickle` file to `../scripts/helper_files/` on your remote system.*
-* If you are not already logged into your Google account, you will be prompted to log in. If you are logged into multiple Google accounts, you will be asked to select one account to use for the authorization.
-* Click the Accept button.
-* The sample will proceed automatically, and you may close the window/tab.
-* You should note a new file called `token.pickle` in the `../scripts/helper_files/` directory. Do not move this file.
+* Move to the "Script Setup" instructions below.
 
 You can always manage your Google API credentials and usage later in the [Google API Console](https://console.developers.google.com/apis/dashboard).
 
@@ -101,7 +92,15 @@ To set up this script for it's first run, follow the instructions below:
 3. Run `pip install -r requirements.txt` - This will install all necessary Python libraries for this script to run.
 4. Within the newly cloned Git repo, navigate to the `../modules` directory.
 5. Run `setup.py`
-    * *Before running this script, ensure you have met all requirements needed to run Google Drive integration via the Drive API using the instructions above.*
+    * Before running this script, ensure you have met all requirements needed to run Google Drive integration via the Drive API using the instructions above.
+        * This setup file is configured to enable full, permissive scope to access all of a user's Google Drive files.
+        * *You can find more information regarding drive Scope access [here](https://developers.google.com/drive/api/v3/about-auth).*
+    * The sample will attempt to open a new window or tab in your default browser. If this fails, copy the URL from the console and manually open it in your browser.
+        * *Note: If you are running this setup on a linux machine, you will need to go through this setup process first using a system that allows you to use a Web Browser and then manually move the generated `token.pickle` file to `../scripts/helper_files/` on your remote system.*
+    * If you are not already logged into your Google account, you will be prompted to log in. If you are logged into multiple Google accounts, you will be asked to select one account to use for the authorization.
+    * Click the Accept button.
+    * The sample will proceed automatically, and you may close the window/tab.
+    * You should note a new file called `token.pickle` in the `../scripts/helper_files/` directory. Do not move this file.
 6. You should be good to go now! --> Run `../scripts/main.py`
 
 <hr>
