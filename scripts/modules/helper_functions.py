@@ -91,7 +91,7 @@ def save_SummaryData(data):
     today = get_Date()
     try:
         print("[*] Saving collected daily summary data...")
-        fileName = today + "_summary_data.csv"
+        fileName = today + "covid-act-now_summary_data.csv"
         filePath = os.path.join(cwd, 'Script_Collected_Data', fileName)
         df.to_csv(filePath)
         print(f"[*] --> SUCCESS | File saved to: {filePath}")
@@ -105,7 +105,7 @@ def save_HistoricData(data):
     today = get_Date()
     try:
         print("[*] Saving collected historic time-series data...")
-        fileName = today + "_timeseries_data.csv"
+        fileName = today + "covid-act-now_timeseries_data.csv"
         filePath = os.path.join(cwd, 'Script_Collected_Data', fileName)
         df.to_csv(filePath)
         print(f"[*] --> SUCCESS | File saved to: {filePath}")
