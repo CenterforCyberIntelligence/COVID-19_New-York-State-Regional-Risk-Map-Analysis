@@ -17,7 +17,6 @@ prs = Presentation(prsPath)
 
 
 class CreatePresentation:
-    # TODO: This doesn't need to be a class - convert to a function
     def __init__(self, data):
         # data[0] = Slide Layout
         # Set slide layout and create slide
@@ -40,7 +39,6 @@ class CreatePresentation:
 def buildSlides():
     prsSlides = [[0, "JTF-COVID J2", "Regional ICU Risk Analysis", ""]]
     cwd = os.getcwd()
-    # TODO: Add the State Overview slide
     print(">>> Support for New York State Overview Slide Pending <<<")
     todayImagesPath = os.path.join(cwd, "Risk_Map_Images", helper_functions.get_Date())
     for imageFile in os.listdir(todayImagesPath):
@@ -105,7 +103,6 @@ def savePresentation(slides):
     pptxFilePath = os.path.join(cwd, "Daily Slides", pptxFileName)
     prs.save(pptxFilePath)
     print(f"[*] Powerpoint file saved to --> {pptxFilePath}\n")
-
     # Open PowerPoint when finished
     # os.startfile(pptxFilePath)
 

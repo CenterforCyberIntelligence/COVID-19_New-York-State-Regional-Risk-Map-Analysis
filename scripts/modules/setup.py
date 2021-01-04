@@ -1,13 +1,12 @@
 import csv
 import os
 import pickle
+import time
 
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-
-# TODO: Combine the driveSetup.py and driveQuickstart.py files
 
 def driveService():
     SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -33,11 +32,12 @@ def driveService():
 
 
 def drive_executeInitialFolderSetup():
-    # TODO: Establish error checking that will prevent this function from re-creating folders with pre-existing names
 
-    print("+" * 35)
+    print("-" * 35)
     print("Initial Google Drive Setup Starting")
-    print("+" * 35)
+    print("-" * 35)
+    print("[!] WARNING: Running this setup more than once will overwrite any existing file references on your Google Drive [!]\n")
+    time.sleep(10)
     service = driveService()
     csv_data = []
 
@@ -75,6 +75,17 @@ def drive_executeInitialFolderSetup():
     csv_data.append(['2', 'ICU Risk Analysis Images Folder', icuRiskAnalysisImagesFolderID])
     print("[*] SUCCESS | ICU Risk Analysis Images Folder Created --> Folder ID: %s" % icuRiskAnalysisImagesFolderID)
 
+    # Create a folder for the ICU Risk Analysis PowerPoint files
+    icuRiskAnalysisPowerPointFolder_metadata = {
+        'name': 'Analysis PowerPoint Files',
+        'mimeType': 'application/vnd.google-apps.folder',
+        'parents': [icuRiskAnalysisFolderID]
+    }
+    icuRiskAnalysisPowerPointFolder = service.files().create(body=icuRiskAnalysisPowerPointFolder_metadata, fields='id').execute()
+    icuRiskAnalysisPowerPointFolderID = icuRiskAnalysisPowerPointFolder.get('id')
+    csv_data.append(['3', 'ICU Risk Analysis PowerPoint Folder', icuRiskAnalysisPowerPointFolderID])
+    print("[*] SUCCESS | ICU Risk Analysis PowerPoint Folder Created --> Folder ID: %s" % icuRiskAnalysisPowerPointFolderID)
+
     # Write File IDs to a CSV File so we can use them later
     header = ['File ID Index', 'File Name', 'File ID']
     filename = os.path.join('../helper_files', 'file_ids.csv')
@@ -90,4 +101,34 @@ def drive_executeInitialFolderSetup():
         print('---> Google Drive Initial Folder Setup Complete <---\n')
 
 
-drive_executeInitialFolderSetup()
+def setup_CreateLocalFolders():
+    print("-"*34)
+    print("Setting up needed local folders...\n")
+    cwd = os.getcwd()
+    try:
+        print("[*] Creating the Daily Slides folder...")
+        os.mkdir(os.path.join(cwd, '../../Daily Slides'))
+    except FileExistsError:
+        print("{*} Daily Slides Folder already exists...")
+        pass
+    except Exception as e:
+        print(f"[!] An unhandled exception occurred while trying to create needed local folders: {e}")
+
+    try:
+        print("[*] Creating the Risk Map Images folder...")
+        os.mkdir(os.path.join(cwd, '../../Risk_Map_Images'))
+    except FileExistsError:
+        print("{*} Risk Map Images folder already exists...")
+    except Exception as e:
+        print(f"[!] An unhandled exception occurred while trying to create needed local folders: {e}")
+
+    print("-" * 34)
+    print("--> All Needed Local Folders Created <--\n")
+
+
+def main():
+    setup_CreateLocalFolders()
+    drive_executeInitialFolderSetup()
+
+
+main()

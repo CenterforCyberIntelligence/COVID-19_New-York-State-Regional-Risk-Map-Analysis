@@ -37,17 +37,8 @@ from modules import helper_functions
 from modules import pptxGenerator
 
 
-# TODO: Update all figures to include current total ICU availability. At this time, only the Capital Region has this completed.
-# TODO: Create a single function for saving images.
-# TODO: Develop a simple method to archive data that is utilized to generate the figures. Some of the data utilized can only be obtained via daily summaries from COVID Act Now.
-# TODO: Probably could go through and work on exception handling. Low priority though...
-
-
 def create_StateOverview(cwd, historicData, todayDate):
     # Creates a County Level COVID-19 Risk Map
-    # TODO: Check to see if this can be updated using the daily summary data frame rather than time series data.
-    # TODO: Update this function to iterate through a helper file containing county names.
-    #  We shouldn't need to hard code each county.
 
     try:
 
@@ -421,7 +412,7 @@ def create_StateOverview(cwd, historicData, todayDate):
         ### Other Figure Details ###
 
         # Plot the as of date/time for the figure
-        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(.01, 118))
+        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(2, 1))
 
         # Plot risk lines
         yellowLineX = [.50, 0]
@@ -437,10 +428,10 @@ def create_StateOverview(cwd, historicData, todayDate):
         plt.plot(redLineX, redLineY, 'r--', linewidth='3')
 
         # Plot "Over Capacity" Box
-        plt.gca().add_patch(Rectangle((1, -1), 3, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+        plt.gca().add_patch(Rectangle((1, -1), 2, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
 
         # Set axis parameters
-        plt.axis([0, 2, 0, 120])
+        plt.axis([0, 2.5, 0, 150])
 
         plt.xlabel('% ICU Beds w/ COVID-19 Patients')
         plt.ylabel('Daily Cases per 100k - 7 Day RA')
@@ -565,6 +556,9 @@ def create_regional_CapitalRegion(cwd, historicData, currentSummary, todayDate):
         x6 = WarrenCounty['metrics.icuHeadroomRatio'].tail(14)
         y6 = WarrenCounty['metrics.caseDensity'].tail(14)
 
+        # Plot the as of date/time for the figure
+        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(2, 1))
+
         # Plot risk lines
         yellowLineX = [.50, 0]
         yellowLineY = [0, 10]
@@ -578,14 +572,11 @@ def create_regional_CapitalRegion(cwd, historicData, currentSummary, todayDate):
         redLineY = [0, 50]
         plt.plot(redLineX, redLineY, 'r--', linewidth='3')
 
-        # # Plot "Over Capacity" Box
-        plt.gca().add_patch(Rectangle((1, -1), 2, 100, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+        # Plot "Over Capacity" Box
+        plt.gca().add_patch(Rectangle((1, -1), 2, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
 
         # Set axis parameters
-        plt.axis([0, 1, 0, 100])
-
-        # Plot the figure as of date/time
-        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(0.01, 98))
+        plt.axis([0, 2.5, 0, 150])
 
         # Plot trend lines
         plt.plot(x1, y1, '.-', linewidth='1', label="Albany County")
@@ -674,6 +665,9 @@ def create_regional_WesternNewYork(cwd, historicData, todayDate):
         x4 = NiagaraCounty['metrics.icuHeadroomRatio'].tail(14)
         y4 = NiagaraCounty['metrics.caseDensity'].tail(14)
 
+        # Plot the as of date/time for the figure
+        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(2, 1))
+
         # Plot risk lines
         yellowLineX = [.50, 0]
         yellowLineY = [0, 10]
@@ -687,14 +681,11 @@ def create_regional_WesternNewYork(cwd, historicData, todayDate):
         redLineY = [0, 50]
         plt.plot(redLineX, redLineY, 'r--', linewidth='3')
 
-        # Set axis parameters
-        plt.axis([0, .8, 0, 100])
-
-        # Plot today's date
-        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(0.01, 98))
-
         # Plot "Over Capacity" Box
-        plt.gca().add_patch(Rectangle((1, -1), 3, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+        plt.gca().add_patch(Rectangle((1, -1), 2, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+
+        # Set axis parameters
+        plt.axis([0, 2.5, 0, 150])
 
         # Plot trend lines
         plt.plot(x1, y1, '.-', linewidth='1', label="Allegany County")
@@ -777,6 +768,9 @@ def create_regional_FingerLakes(cwd, historicData, todayDate):
         x5 = WyomingCounty['metrics.icuHeadroomRatio'].tail(14)
         y5 = WyomingCounty['metrics.caseDensity'].tail(14)
 
+        # Plot the as of date/time for the figure
+        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(2, 1))
+
         # Plot risk lines
         yellowLineX = [.50, 0]
         yellowLineY = [0, 10]
@@ -790,14 +784,11 @@ def create_regional_FingerLakes(cwd, historicData, todayDate):
         redLineY = [0, 50]
         plt.plot(redLineX, redLineY, 'r--', linewidth='3')
 
-        # Set axis parameters
-        plt.axis([0, .8, 0, 100])
-
-        # Plot today's date
-        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(.01, 98))
-
         # Plot "Over Capacity" Box
-        plt.gca().add_patch(Rectangle((1, -1), 3, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+        plt.gca().add_patch(Rectangle((1, -1), 2, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+
+        # Set axis parameters
+        plt.axis([0, 2.5, 0, 150])
 
         # Plot trend lines
         plt.plot(x1, y1, '.-', linewidth='1', label="Genesee County")
@@ -879,6 +870,9 @@ def create_regional_SouthernTier(cwd, historicData, todayDate):
         x7 = TompkinsCounty['metrics.icuHeadroomRatio'].tail(14)
         y7 = TompkinsCounty['metrics.caseDensity'].tail(14)
 
+        # Plot the as of date/time for the figure
+        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(2, 1))
+
         # Plot risk lines
         yellowLineX = [.50, 0]
         yellowLineY = [0, 10]
@@ -892,14 +886,11 @@ def create_regional_SouthernTier(cwd, historicData, todayDate):
         redLineY = [0, 50]
         plt.plot(redLineX, redLineY, 'r--', linewidth='3')
 
-        # Set axis parameters
-        plt.axis([0, .9, 0, 100])
-
-        # Plot today's date
-        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(.01, 98))
-
         # Plot "Over Capacity" Box
-        plt.gca().add_patch(Rectangle((1, -1), 3, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+        plt.gca().add_patch(Rectangle((1, -1), 2, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+
+        # Set axis parameters
+        plt.axis([0, 2.5, 0, 150])
 
         # Plot trend lines
         plt.plot(x1, y1, '.-', linewidth='1', label="Broome County")
@@ -979,6 +970,9 @@ def create_regional_CentralNewYork(cwd, historicData, todayDate):
         x5 = OswegoCounty['metrics.icuHeadroomRatio'].tail(14)
         y5 = OswegoCounty['metrics.caseDensity'].tail(14)
 
+        # Plot the as of date/time for the figure
+        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(2, 1))
+
         # Plot risk lines
         yellowLineX = [.50, 0]
         yellowLineY = [0, 10]
@@ -992,14 +986,11 @@ def create_regional_CentralNewYork(cwd, historicData, todayDate):
         redLineY = [0, 50]
         plt.plot(redLineX, redLineY, 'r--', linewidth='3')
 
-        # Set axis parameters
-        plt.axis([0, 2, 0, 125])
-
-        # Plot today's date
-        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(1.7, 1))
-
         # Plot "Over Capacity" Box
-        plt.gca().add_patch(Rectangle((1, -1), 3, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+        plt.gca().add_patch(Rectangle((1, -1), 2, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+
+        # Set axis parameters
+        plt.axis([0, 2.5, 0, 150])
 
         # Plot trend lines
         plt.plot(x1, y1, '.-', linewidth='1', label="Cayuga County")
@@ -1074,6 +1065,9 @@ def create_regional_MohawkValley(cwd, historicData, todayDate):
         x5 = OtsegoCounty['metrics.icuHeadroomRatio'].tail(14)
         y5 = OtsegoCounty['metrics.caseDensity'].tail(14)
 
+        # Plot the as of date/time for the figure
+        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(2, 1))
+
         # Plot risk lines
         yellowLineX = [.50, 0]
         yellowLineY = [0, 10]
@@ -1087,14 +1081,11 @@ def create_regional_MohawkValley(cwd, historicData, todayDate):
         redLineY = [0, 50]
         plt.plot(redLineX, redLineY, 'r--', linewidth='3')
 
-        # Set axis parameters
-        plt.axis([0, .8, 0, 120])
-
-        # Plot today's date
-        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(0.01, 117))
-
         # Plot "Over Capacity" Box
-        plt.gca().add_patch(Rectangle((1, -1), 3, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+        plt.gca().add_patch(Rectangle((1, -1), 2, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+
+        # Set axis parameters
+        plt.axis([0, 2.5, 0, 150])
 
         # Plot trend lines
         plt.plot(x1, y1, '.-', linewidth='1', label="Fulton County")
@@ -1173,6 +1164,9 @@ def create_regional_NorthCountry(cwd, historicData, todayDate):
         x6 = StLawrenceCounty['metrics.icuHeadroomRatio'].tail(14)
         y6 = StLawrenceCounty['metrics.caseDensity'].tail(14)
 
+        # Plot the as of date/time for the figure
+        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(2, 1))
+
         # Plot risk lines
         yellowLineX = [.50, 0]
         yellowLineY = [0, 10]
@@ -1186,14 +1180,11 @@ def create_regional_NorthCountry(cwd, historicData, todayDate):
         redLineY = [0, 50]
         plt.plot(redLineX, redLineY, 'r--', linewidth='3')
 
-        # Set axis parameters
-        plt.axis([0, .75, 0, 80])
-
-        # Plot today's date
-        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(.01, 78))
-
         # Plot "Over Capacity" Box
-        plt.gca().add_patch(Rectangle((1, -1), 3, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+        plt.gca().add_patch(Rectangle((1, -1), 2, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+
+        # Set axis parameters
+        plt.axis([0, 2.5, 0, 150])
 
         # Plot trend lines
         plt.plot(x1, y1, '.-', linewidth='1', label="Clinton County")
@@ -1286,6 +1277,9 @@ def create_regional_MidHudson(cwd, historicData, todayDate):
         x7 = WestchesterCounty['metrics.icuHeadroomRatio'].tail(14)
         y7 = WestchesterCounty['metrics.caseDensity'].tail(14)
 
+        # Plot the as of date/time for the figure
+        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(2, 1))
+
         # Plot risk lines
         yellowLineX = [.50, 0]
         yellowLineY = [0, 10]
@@ -1299,14 +1293,11 @@ def create_regional_MidHudson(cwd, historicData, todayDate):
         redLineY = [0, 50]
         plt.plot(redLineX, redLineY, 'r--', linewidth='3')
 
-        # Set axis parameters
-        plt.axis([0, 1.2, 0, 100])
-
-        # Plot today's date
-        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(1, 1))
-
         # Plot "Over Capacity" Box
-        plt.gca().add_patch(Rectangle((1, -1), 3, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+        plt.gca().add_patch(Rectangle((1, -1), 2, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+
+        # Set axis parameters
+        plt.axis([0, 2.5, 0, 150])
 
         # Plot trend lines
         plt.plot(x1, y1, '.-', linewidth='1', label="Dutchess County")
@@ -1372,15 +1363,15 @@ def create_regional_LongIsland(cwd, historicData, todayDate):
         SuffolkCounty = SuffolkCounty[SuffolkCounty['metrics.icuHeadroomRatio'] != 0]
         SuffolkCounty = SuffolkCounty[SuffolkCounty['metrics.caseDensity'] != 0]
 
-        # Plot today's date
-        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(0.01, 78))
-
         # X/Y Metrics
         x1 = NassauCounty['metrics.icuHeadroomRatio'].tail(14)
         y1 = NassauCounty['metrics.caseDensity'].tail(14)
 
         x2 = SuffolkCounty['metrics.icuHeadroomRatio'].tail(14)
         y2 = SuffolkCounty['metrics.caseDensity'].tail(14)
+
+        # Plot the as of date/time for the figure
+        plt.annotate(f"As of: {helper_functions.get_FigureDateTime()}", xy=(2, 1))
 
         # Plot risk lines
         yellowLineX = [.50, 0]
@@ -1396,10 +1387,10 @@ def create_regional_LongIsland(cwd, historicData, todayDate):
         plt.plot(redLineX, redLineY, 'r--', linewidth='3')
 
         # Plot "Over Capacity" Box
-        plt.gca().add_patch(Rectangle((1,-1),2,90, edgecolor='red', facecolor='none', lw=2, hatch='/'))
+        plt.gca().add_patch(Rectangle((1, -1), 2, 200, edgecolor='red', facecolor='none', lw=2, hatch='/'))
 
         # Set axis parameters
-        plt.axis([0, .9, 0, 80])
+        plt.axis([0, 2.5, 0, 150])
 
         # Plot trend lines
         plt.plot(x1, y1, '.-', linewidth='1', label="Nassau County")

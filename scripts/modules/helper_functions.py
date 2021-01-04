@@ -61,7 +61,6 @@ def get_FigureDateTime():
 
 
 def get_HistoricData():
-    # TODO: Update this to use JSON
     try:
         HistoricData = pd.read_csv(
             f"https://api.covidactnow.org/v2/counties.timeseries.csv?apiKey={apiKey}")
@@ -124,13 +123,13 @@ def drive_getImageFolderID():
             pass
 
 
-def drive_createTodayFolder():
+def drive_createTodayFolder_Images():
     cwd = os.getcwd()
     filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
     today = get_Date()
     service = driveService()
-    print("-"*66)
-    print("*** Starting Google Drive Functions ***\n")
+    print("-"*62)
+    print("*** Starting Google Drive Function | Write Images to Drive ***\n")
 
     # Find the ICU Images Folder ID (saved during the initial creation of the folder in file_ids.csv under helper_files
     imagesFolderID = drive_getImageFolderID()
@@ -207,9 +206,8 @@ def drive_createTodayFolder():
 
 
 def drive_writeImagesToFolder():
-    # TODO: Check to see if files for today already exist in folder
 
-    drive_imagesFolderID = drive_createTodayFolder()
+    drive_imagesFolderID = drive_createTodayFolder_Images()
     if drive_imagesFolderID is None:
         print("[!] Image Folder Generation Failed...")
         print("[**] Either the images folder for today is in the Google Drive Trash, or it already exists and no action is needed.\n")
@@ -230,4 +228,8 @@ def drive_writeImagesToFolder():
                                           fields='id').execute()
             print(f"--> Image File Uploaded to GDrive | FileName: {filename} | GDrive File ID: {file.get('id')}")
         print("\n--> All Images Uploaded to Google Drive <--\n")
+
+
+def drive_writePowerPointToFolder():
+    pass
 
