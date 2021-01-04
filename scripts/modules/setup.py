@@ -86,6 +86,17 @@ def drive_executeInitialFolderSetup():
     csv_data.append(['3', 'ICU Risk Analysis PowerPoint Folder', icuRiskAnalysisPowerPointFolderID])
     print("[*] SUCCESS | ICU Risk Analysis PowerPoint Folder Created --> Folder ID: %s" % icuRiskAnalysisPowerPointFolderID)
 
+    # Create a folder for historic data management files
+    dataManagementFolder_metadata = {
+        'name': 'Collected Data',
+        'mimeType': 'application/vnd.google-apps.folder',
+        'parents': [parentFolderID]
+    }
+    dataManagementFolder = service.files().create(body=dataManagementFolder_metadata, fields='id').execute()
+    dataManagementFolderID = dataManagementFolder.get('id')
+    csv_data.append(['4', 'Historic Data Management', dataManagementFolderID])
+    print("[*] SUCCESS | Folder for Historic Data Created --> Folder ID: %s" % dataManagementFolderID)
+
     # Write File IDs to a CSV File so we can use them later
     header = ['File ID Index', 'File Name', 'File ID']
     filename = os.path.join('../helper_files', 'file_ids.csv')
@@ -105,6 +116,15 @@ def setup_CreateLocalFolders():
     print("-"*34)
     print("Setting up needed local folders...\n")
     cwd = os.getcwd()
+
+    try:
+        print("[*] Creating a data management folder to save daily historic and summary data...")
+        os.mkdir(os.path.join(cwd, '../../Script_Collected_Data'))
+    except FileExistsError:
+        print("{*} Data Management folder already exists...")
+        pass
+    except Exception as e:
+        print(f"[!] An unhandled exception occurred while trying to create needed local folders: {e}")
     try:
         print("[*] Creating the Daily Slides folder...")
         os.mkdir(os.path.join(cwd, '../../Daily Slides'))

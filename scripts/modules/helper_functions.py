@@ -66,6 +66,7 @@ def get_HistoricData():
             f"https://api.covidactnow.org/v2/counties.timeseries.csv?apiKey={apiKey}")
         HistoricData = HistoricData[HistoricData['state'] == "NY"]
         HistoricData = HistoricData.fillna(0)
+        save_HistoricData(HistoricData)
         return HistoricData
     except Exception as e:
         print("\nThe script encountered an unhandled exception while attempting to retrieve time series data. See the get_HistoricData() function.")
@@ -77,10 +78,39 @@ def get_currentSummary():
         todaySummary = pd.read_json(f"https://api.covidactnow.org/v2/counties.json?apiKey={apiKey}")
         todaySummary = todaySummary[todaySummary['state'] == "NY"]
         todaySummary = todaySummary.fillna(0)
+        save_SummaryData(todaySummary)
         return todaySummary
     except Exception as e:
         print("\nThe script encountered an unhandled exception while attempting to retrieve today's summary data. See the get_currentSummary() function.")
         print(f"Exception: {e}")
+
+
+def save_SummaryData(data):
+    df = data
+    cwd = os.getcwd()
+    today = get_Date()
+    try:
+        print("[*] Saving collected daily summary data...")
+        fileName = today + "_summary_data.csv"
+        filePath = os.path.join(cwd, 'Script_Collected_Data', fileName)
+        df.to_csv(filePath)
+        print(f"[*] --> SUCCESS | File saved to: {filePath}")
+    except Exception as e:
+        print(f"[!] An error occurred while attempting to save the historic data collected for today: {e}\n")
+
+
+def save_HistoricData(data):
+    df = data
+    cwd = os.getcwd()
+    today = get_Date()
+    try:
+        print("[*] Saving collected historic time-series data...")
+        fileName = today + "_timeseries_data.csv"
+        filePath = os.path.join(cwd, 'Script_Collected_Data', fileName)
+        df.to_csv(filePath)
+        print(f"[*] --> SUCCESS | File saved to: {filePath}")
+    except Exception as e:
+        print(f"[!] An error occurred while attempting to save collected time-series data: {e}\n")
 
 
 def driveService():
@@ -119,6 +149,38 @@ def drive_getImageFolderID():
             imagesFolderID = folderData[2]
             print(f"    --> Found ID: {imagesFolderID}\n")
             return imagesFolderID
+        else:
+            pass
+
+
+def drive_getDataManagementFolderID():
+    print("*** Verifying Data Management Folder Setup ***\n")
+    print("[**] Looking up the Historic Data Management folder ID...")
+    cwd = os.getcwd()
+    filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
+    file_ids = csv.reader(open(filename, 'r'))
+    for row in file_ids:
+        if row[0] == '4':
+            folderData = row
+            historicDataFolderID = folderData[2]
+            print(f"    --> Found ID: {historicDataFolderID}\n")
+            return historicDataFolderID
+        else:
+            pass
+
+
+def drive_getPowerPointFolderID():
+    print("*** Verifying PowerPoint Folder Setup ***\n")
+    print("[**] Looking up the PowerPoint folder ID...")
+    cwd = os.getcwd()
+    filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
+    file_ids = csv.reader(open(filename, 'r'))
+    for row in file_ids:
+        if row[0] == '3':
+            folderData = row
+            powerPointFolderID = folderData[2]
+            print(f"    --> Found ID: {powerPointFolderID}\n")
+            return powerPointFolderID
         else:
             pass
 
@@ -230,6 +292,40 @@ def drive_writeImagesToFolder():
         print("\n--> All Images Uploaded to Google Drive <--\n")
 
 
-def drive_writePowerPointToFolder():
-    pass
+def drive_writePowerPointToFolder(powerPointFilePath):
+    today = get_Date()
+    folderID = drive_getPowerPointFolderID()
+    if folderID is None:
+        print("[!] Something bad happened while attempting to find the PowerPoint folder ID...")
+        pass
+    else:
+        print(f"PowerPoint Folder ID: {folderID}")
+        service = driveService()
+        fileName = today + "_ICU-Risk-Analysis-Slides.pptx"
+        file_metaData = {'name': fileName, 'parents': [folderID]}
+        media = MediaFileUpload(powerPointFilePath)
+        file = service.files().create(body=file_metaData,
+                                      media_body=media,
+                                      fields='id').execute()
+        print(f"--> PowerPoint File Uploaded to GDrive | FileName: {fileName} | GDrive File ID: {file.get('id')}\n")
 
+
+def drive_writeDataToFolder():
+    folderID = drive_getDataManagementFolderID()
+    if folderID is None:
+        print("[!] Something bad happened while attempting to find the data management folder ID...")
+        pass
+    else:
+        print(f"Data Management Folder ID: {folderID}")
+        service = driveService()
+        cwd = os.getcwd()
+        folderPath = os.path.join(cwd, 'Script_Collected_Data')
+        for filename in os.listdir(folderPath):
+            filePath = os.path.join(folderPath, filename)
+            file_metaData = {'name': filename, 'parents': [folderID]}
+            media = MediaFileUpload(filePath, mimetype='file/csv')
+            file = service.files().create(body=file_metaData,
+                                          media_body=media,
+                                          fields='id').execute()
+            print(f"--> Data File Uploaded to GDrive | FileName: {filename} | GDrive File ID: {file.get('id')}")
+        print("\n--> All Data Files Uploaded to Google Drive <--\n")

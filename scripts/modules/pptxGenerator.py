@@ -37,9 +37,9 @@ class CreatePresentation:
 
 
 def buildSlides():
-    prsSlides = [[0, "JTF-COVID J2", "Regional ICU Risk Analysis", ""]]
+    prsSlides = [[0, "Center for Cyber Intelligence", "New York Regional ICU Risk Analysis", ""]]
     cwd = os.getcwd()
-    print(">>> Support for New York State Overview Slide Pending <<<")
+    print("\n>>> Support for New York State Overview Slide Pending <<<\n")
     todayImagesPath = os.path.join(cwd, "Risk_Map_Images", helper_functions.get_Date())
     for imageFile in os.listdir(todayImagesPath):
         if imageFile == f"Capital-Region_Risk-Map_{helper_functions.get_Date()}.png":
@@ -103,6 +103,8 @@ def savePresentation(slides):
     pptxFilePath = os.path.join(cwd, "Daily Slides", pptxFileName)
     prs.save(pptxFilePath)
     print(f"[*] Powerpoint file saved to --> {pptxFilePath}\n")
+    helper_functions.drive_writePowerPointToFolder(pptxFilePath)
+
     # Open PowerPoint when finished
     # os.startfile(pptxFilePath)
 
