@@ -94,7 +94,6 @@ def save_SummaryData(data):
         fileName = today + "_covid-act-now_summary_data.csv"
         filePath = os.path.join(cwd, 'Script_Collected_Data', fileName)
         df.to_csv(filePath)
-        print(f"[*] --> SUCCESS | File saved to: {filePath}")
     except Exception as e:
         print(f"[!] An error occurred while attempting to save the historic data collected for today: {e}\n")
 
@@ -108,7 +107,6 @@ def save_HistoricData(data):
         fileName = today + "_covid-act-now_timeseries_data.csv"
         filePath = os.path.join(cwd, 'Script_Collected_Data', fileName)
         df.to_csv(filePath)
-        print(f"[*] --> SUCCESS | File saved to: {filePath}")
     except Exception as e:
         print(f"[!] An error occurred while attempting to save collected time-series data: {e}\n")
 
