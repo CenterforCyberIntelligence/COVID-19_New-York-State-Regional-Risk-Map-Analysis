@@ -136,7 +136,7 @@ def driveService():
 
 def drive_get_ICUImageFolderID():
     print("*** Verifying ICU Analysis Images Folder Setup ***\n")
-    print("[**] Looking up the Analysis Images folder ID...")
+    print("[**] Looking up the Analysis Images folder ID in the local configuration file...")
     cwd = os.getcwd()
     filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
     file_ids = pd.read_csv(filename)
@@ -146,7 +146,7 @@ def drive_get_ICUImageFolderID():
 
 def drive_get_DataManagementFolderID():
     print("*** Verifying Data Management Folder Setup ***\n")
-    print("[**] Looking up the Historic Data Management folder ID...")
+    print("[**] Looking up the Historic Data Management folder ID in the local configuration file...")
     cwd = os.getcwd()
     filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
     file_ids = pd.read_csv(filename)
@@ -156,7 +156,7 @@ def drive_get_DataManagementFolderID():
 
 def drive_get_PowerPointFolderID():
     print("*** Verifying PowerPoint Folder Setup ***\n")
-    print("[**] Looking up the PowerPoint folder ID...")
+    print("[**] Looking up the PowerPoint folder ID in the local configuration file...")
     cwd = os.getcwd()
     filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
     file_ids = pd.read_csv(filename)
