@@ -199,12 +199,8 @@ def drive_create_TodayFolder_Images():
                                                           fields='id').execute()
         gdrive_TodayImagesFolderID = gdrive_todayImagesFolder.get('id')
 
-        # Get "File ID Index" of last row in file_ids csv file
-        indexedCSVFile = pd.read_csv(filename)
-        csvRecord_todayFolderIndexValue = indexedCSVFile['File ID Index'].iloc[-1] + 1
-
         csvRecord_todayFolderName = "ICU_Analysis_Images_" + today
-        csv_data = [csvRecord_todayFolderIndexValue, csvRecord_todayFolderName, gdrive_TodayImagesFolderID]
+        csv_data = [csvRecord_todayFolderName, gdrive_TodayImagesFolderID]
 
         with open(filename, 'a', newline='') as csv_file:
             csv_writer = csv.writer(csv_file)
@@ -230,14 +226,10 @@ def drive_create_TodayFolder_Images():
                 gdrive_todayImagesFolder = service.files().create(body=gdrive_todayImagesFolder_metadata, fields='id').execute()
                 gdrive_TodayImagesFolderID = gdrive_todayImagesFolder.get('id')
 
-                # Get "File ID Index" of last row in file_ids csv file
-                indexedCSVFile = pd.read_csv(filename)
-                csvRecord_todayFolderIndexValue = indexedCSVFile['File ID Index'].iloc[-1] + 1
-
                 csvRecord_todayFolderName = "ICU_Analysis_Images_" + today
-                csv_data = [csvRecord_todayFolderIndexValue, csvRecord_todayFolderName, gdrive_TodayImagesFolderID]
+                csv_data = [csvRecord_todayFolderName, gdrive_TodayImagesFolderID]
 
-                with open(filename, 'a+', newline='') as csv_file:
+                with open(filename, 'a', newline='') as csv_file:
                     csv_writer = csv.writer(csv_file)
                     csv_writer.writerow(csv_data)
                     csv_file.close()
