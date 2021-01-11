@@ -259,7 +259,7 @@ def drive_executeInitialFolderSetup():
     }
     dailyTestingandDailyCaseAnalysisParent = service.files().create(body=dailyTestingandDailyCaseAnalysisParent_metadata, fields='id').execute()
     dailyTestingandDailyCaseAnalysisFolderID = dailyTestingandDailyCaseAnalysisParent.get('id')
-    csv_data.append(['Historic Data Management', dailyTestingandDailyCaseAnalysisFolderID])
+    csv_data.append(['Daily Testing and COVID Case Analysis', dailyTestingandDailyCaseAnalysisFolderID])
     print("[*] SUCCESS | Folder for Historic Data Created --> Folder ID: %s" % dailyTestingandDailyCaseAnalysisFolderID)
 
 
