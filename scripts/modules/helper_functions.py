@@ -1,10 +1,9 @@
 import csv
 import os
-import pickle
-from datetime import datetime
-
 import pandas as pd
+import pickle
 import pytz
+from datetime import datetime
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
@@ -135,55 +134,37 @@ def driveService():
     return service
 
 
-def drive_getImageFolderID():
+def drive_get_ICUImageFolderID():
     print("*** Verifying ICU Analysis Images Folder Setup ***\n")
     print("[**] Looking up the Analysis Images folder ID...")
     cwd = os.getcwd()
     filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
-    file_ids = csv.reader(open(filename, 'r'))
-    for row in file_ids:
-        if row[0] == '2':
-            folderData = row
-            imagesFolderID = folderData[2]
-            print(f"    --> Found ID: {imagesFolderID}\n")
-            return imagesFolderID
-        else:
-            pass
+    file_ids = pd.read_csv(filename)
+    imagesFolderID = file_ids.loc[file_ids['File Name'] == "ICU Risk Analysis Images Folder"]['File ID'].item()
+    return imagesFolderID
 
 
-def drive_getDataManagementFolderID():
+def drive_get_DataManagementFolderID():
     print("*** Verifying Data Management Folder Setup ***\n")
     print("[**] Looking up the Historic Data Management folder ID...")
     cwd = os.getcwd()
     filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
-    file_ids = csv.reader(open(filename, 'r'))
-    for row in file_ids:
-        if row[0] == '4':
-            folderData = row
-            historicDataFolderID = folderData[2]
-            print(f"    --> Found ID: {historicDataFolderID}\n")
-            return historicDataFolderID
-        else:
-            pass
+    file_ids = pd.read_csv(filename)
+    historicDataFolderID = file_ids.loc[file_ids['File Name'] == "Historic Data Management"]['File ID'].item()
+    return historicDataFolderID
 
 
-def drive_getPowerPointFolderID():
+def drive_get_PowerPointFolderID():
     print("*** Verifying PowerPoint Folder Setup ***\n")
     print("[**] Looking up the PowerPoint folder ID...")
     cwd = os.getcwd()
     filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
-    file_ids = csv.reader(open(filename, 'r'))
-    for row in file_ids:
-        if row[0] == '3':
-            folderData = row
-            powerPointFolderID = folderData[2]
-            print(f"    --> Found ID: {powerPointFolderID}\n")
-            return powerPointFolderID
-        else:
-            pass
+    file_ids = pd.read_csv(filename)
+    powerPointFolderID = file_ids.loc[file_ids['File Name'] == "ICU Risk Analysis PowerPoint Folder"]['File ID'].item()
+    return powerPointFolderID
 
 
-def drive_createTodayFolder_Images():
+def drive_create_TodayFolder_Images():
     cwd = os.getcwd()
     filename = os.path.join(cwd, 'scripts', 'helper_files', 'file_ids.csv')
     today = get_Date()
@@ -192,7 +173,7 @@ def drive_createTodayFolder_Images():
     print("*** Starting Google Drive Function | Write Images to Drive ***\n")
 
     # Find the ICU Images Folder ID (saved during the initial creation of the folder in file_ids.csv under helper_files
-    imagesFolderID = drive_getImageFolderID()
+    imagesFolderID = drive_get_ICUImageFolderID()
 
     # Check to see if there is a in Google Drive for today
     print("[**] Checking to see if a folder for today already exists...\n")
@@ -265,9 +246,9 @@ def drive_createTodayFolder_Images():
                 return gdrive_TodayImagesFolderID
 
 
-def drive_writeImagesToFolder():
+def drive_write_ICUImagesToFolder():
 
-    drive_imagesFolderID = drive_createTodayFolder_Images()
+    drive_imagesFolderID = drive_create_TodayFolder_Images()
     if drive_imagesFolderID is None:
         print("[!] Image Folder Generation Failed...")
         print("[**] Either the images folder for today is in the Google Drive Trash, or it already exists and no action is needed.\n")
@@ -290,9 +271,9 @@ def drive_writeImagesToFolder():
         print("\n--> All Images Uploaded to Google Drive <--\n")
 
 
-def drive_writePowerPointToFolder(powerPointFilePath):
+def drive_write_ICUPowerPointToFolder(powerPointFilePath):
     today = get_Date()
-    folderID = drive_getPowerPointFolderID()
+    folderID = drive_get_PowerPointFolderID()
     if folderID is None:
         print("[!] Something bad happened while attempting to find the PowerPoint folder ID...")
         pass
@@ -308,8 +289,9 @@ def drive_writePowerPointToFolder(powerPointFilePath):
         print(f"--> PowerPoint File Uploaded to GDrive | FileName: {fileName} | GDrive File ID: {file.get('id')}\n")
 
 
-def drive_writeDataToFolder():
-    folderID = drive_getDataManagementFolderID()
+def drive_write_DataToFolder():
+    folderID = drive_get_DataManagementFolderID()
+    today = get_Date()
     if folderID is None:
         print("[!] Something bad happened while attempting to find the data management folder ID...")
         pass
@@ -319,11 +301,14 @@ def drive_writeDataToFolder():
         cwd = os.getcwd()
         folderPath = os.path.join(cwd, 'Script_Collected_Data')
         for filename in os.listdir(folderPath):
-            filePath = os.path.join(folderPath, filename)
-            file_metaData = {'name': filename, 'parents': [folderID]}
-            media = MediaFileUpload(filePath, mimetype='file/csv')
-            file = service.files().create(body=file_metaData,
-                                          media_body=media,
-                                          fields='id').execute()
-            print(f"--> Data File Uploaded to GDrive | FileName: {filename} | GDrive File ID: {file.get('id')}")
+            if today in filename:
+                filePath = os.path.join(folderPath, filename)
+                file_metaData = {'name': filename, 'parents': [folderID]}
+                media = MediaFileUpload(filePath, mimetype='file/csv')
+                file = service.files().create(body=file_metaData,
+                                              media_body=media,
+                                              fields='id').execute()
+                print(f"--> Data File Uploaded to GDrive | FileName: {filename} | GDrive File ID: {file.get('id')}")
+            else:
+                pass
         print("\n--> All Data Files Uploaded to Google Drive <--\n")

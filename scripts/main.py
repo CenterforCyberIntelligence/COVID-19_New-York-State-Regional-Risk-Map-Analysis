@@ -1459,7 +1459,7 @@ def main():
     print("[*] --> [2 of 2] COMPLETE | Current summary data converted to a Python pandas data frame...\n")
 
     # Save the data to the Google Drive
-    helper_functions.drive_writeDataToFolder()
+    helper_functions.drive_write_DataToFolder()
 
     # Create the figures
     print("*** Creating Analytical Figures ***\n")
@@ -1489,7 +1489,7 @@ def main():
 
     print("\n** Creating PowerPoint Presentation **\n")
     pptxGenerator.makePresentation()
-    helper_functions.drive_writeImagesToFolder()
+    helper_functions.drive_write_ICUImagesToFolder()
 
     print("\n**************************")
     print("---> PROCESS COMPLETE <---")

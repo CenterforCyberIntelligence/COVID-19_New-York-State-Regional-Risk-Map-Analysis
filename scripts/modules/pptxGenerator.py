@@ -103,7 +103,7 @@ def savePresentation(slides):
     pptxFilePath = os.path.join(cwd, "Daily Slides", pptxFileName)
     prs.save(pptxFilePath)
     print(f"[*] Powerpoint file saved to --> {pptxFilePath}\n")
-    helper_functions.drive_writePowerPointToFolder(pptxFilePath)
+    helper_functions.drive_write_ICUPowerPointToFolder(pptxFilePath)
 
     # Open PowerPoint when finished
     # os.startfile(pptxFilePath)
